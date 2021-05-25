@@ -113,7 +113,7 @@ class User extends Authenticatable
     
     public function feed_microposts()
     {
-        $userIds = $this->followings()->pluck('uses.id')->toArray();
+        $userIds = $this->followings()->pluck('users.id')->toArray();
         
         $userIds[] = $this->id;
         

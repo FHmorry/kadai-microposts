@@ -23,7 +23,7 @@ class UsersController extends Controller
         
         $user->loadRelationshipCounts();
         
-        $microposts = $user->microposts()->orderBy('create_at','desc')->paginate(10);
+        $microposts = $user->microposts()->orderBy('created_at','desc')->paginate(10);
         
         return view('users.show',[
             'user' => $user,
