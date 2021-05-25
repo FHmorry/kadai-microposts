@@ -39,7 +39,7 @@ class UsersController extends Controller
         
         $followings = $user->followings()->paginate(10);
         
-        return view('uses.followings',[
+        return view('users.followings',[
             'user' => $user,
             'users' => $followings,
         ]);
@@ -55,7 +55,7 @@ class UsersController extends Controller
         
         return view('users.followers',[
             'user'=>$user,
-            'users'=>$folowers,
+            'users'=>$followers,
         ]);
     }
 }
