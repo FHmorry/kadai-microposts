@@ -30,8 +30,9 @@ class MicropostsController extends Controller
             ]);
             
             $request->user()->microposts()->create([
-                'content' => $request->content,
+                'content' => $request->content
             ]);
+            
                 
             return back();
         }

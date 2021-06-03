@@ -6,6 +6,8 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+use App\Micropost;
+
 class User extends Authenticatable
 {   
     use Notifiable;
@@ -43,7 +45,7 @@ class User extends Authenticatable
     }
     public function loadRelationshipCounts()
     {
-        $this->loadCount(['microposts','followings','followers']);
+        $this->loadCount(['microposts','followings','followers','favoritings']);
     }
     // フォロー中のユーザー
     public function followings()
@@ -119,5 +121,49 @@ class User extends Authenticatable
         
         return Micropost::whereIn('user_id',$userIds);
     }
+ 
+ 
     
+    //このユーザーがお気に入りにしている投稿
+    public function favoritings()
+    {
+        return $this->belongsToMany(Micropost::class, 'user_favorite', 'user_id', 'micropost_id')->withTimestamps();
+    }
+
+    
+    public function favorites($micropostId)
+    {
+        // is_favoritings(登録しているかどうか)の結果を持ってくる　trueかfalse
+        //trueならなにもしない
+        if ($this->is_favoriting($micropostId)) 
+        {   
+            return false;
+        } else {
+            // 上記じゃないなら登録する
+            $this->favoritings()->attach($micropostId);
+            
+            return true;
+        }
+    }
+
+    public function unfavorites($micropostId)
+    {
+        // is_favoritings(登録しているかどうか)の結果を持ってくる　trueかfalse
+        //trueなら登録を外す
+        if ($this->is_favoriting($micropostId))
+        {
+            $this->favoritings()->detach($micropostId);
+            
+            return true;
+        } else {
+            // 上記じゃないなら何もしない
+            return false;
+        }
+    }
+    
+    public function is_favoriting($micropostId)
+    {
+        // 登録中に $micropostIdのものが存在すればtrue、なければfalse
+        return $this->favoritings()->where('micropost_id', $micropostId)->exists();
+    }
 }
